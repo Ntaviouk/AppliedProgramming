@@ -14,6 +14,11 @@ public class Main {
             System.out.println(b);
         }
 
+        System.out.println("\nКниги видавництва А-ба-ба-га-ла-ма-га:");
+        for (Book b : library.getBooksByPublisher("А-ба-ба-га-ла-ма-га")) {
+            System.out.println(b);
+        }
+
         System.out.println("\nКниги після 2010 року:");
         for (Book b : library.getBooksAfterYear(2010)) {
             System.out.println(b);
