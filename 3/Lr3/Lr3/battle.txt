@@ -1,0 +1,9 @@
+Бій: Rembo VS Hummer
+Rembo атакував Hummer на 20 (залишилось HP: 80)
+Hummer атакував Rembo на 50 (залишилось HP: 150)
+Rembo атакував Hummer на 20 (залишилось HP: 60)
+Hummer атакував Rembo на 50 (залишилось HP: 100)
+Rembo атакував Hummer на 20 (залишилось HP: 40)
+Rembo атакував Hummer на 20 (залишилось HP: 20)
+Rembo атакував Hummer на 20 (залишилось HP: 0)
+Rembo переміг!
