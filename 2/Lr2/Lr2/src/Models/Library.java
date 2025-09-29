@@ -14,7 +14,7 @@ public class Library {
         books.add(book);
     }
 
-    // а) книги заданого автора
+    // книги заданого автора
     public List<Book> getBooksByAuthor(String author) {
         List<Book> result = new ArrayList<>();
         for (Book book : books) {
@@ -25,7 +25,7 @@ public class Library {
         return result;
     }
 
-    // b) книги заданого видавництва
+    // книги заданого видавництва
     public List<Book> getBooksByPublisher(String publisher) {
         List<Book> result = new ArrayList<>();
         for (Book book : books) {
@@ -36,7 +36,7 @@ public class Library {
         return result;
     }
 
-    // c) книги після заданого року
+    // книги після заданого року
     public List<Book> getBooksAfterYear(int year) {
         List<Book> result = new ArrayList<>();
         for (Book book : books) {

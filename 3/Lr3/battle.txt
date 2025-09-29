@@ -1,0 +1,5 @@
+Бій: Rembo VS Drevo
+Drevo атакував Rembo на 50 (залишилось HP: 50)
+Rembo атакував Drevo на 50 (залишилось HP: 50)
+Drevo атакував Rembo на 50 (залишилось HP: 0)
+Drevo переміг!

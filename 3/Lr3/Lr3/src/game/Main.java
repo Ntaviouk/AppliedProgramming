@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("\n__ МЕНЮ __");
+            System.out.println("\n МЕНЮ ");
             System.out.println("1. Створити дроїда");
             System.out.println("2. Показати список дроїдів");
             System.out.println("3. Запустити бій 1 на 1");
