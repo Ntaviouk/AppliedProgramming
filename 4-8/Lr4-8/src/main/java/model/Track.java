@@ -1,24 +1,17 @@
 package model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
+@AllArgsConstructor
 public class Track implements Serializable {
     private String title;
     private Artist artist;
     private Genre genre;
     private int durationSeconds;
-
-    public Track(String title, Artist artist, Genre genre, int durationSeconds) {
-        this.title = title;
-        this.artist = artist;
-        this.genre = genre;
-        this.durationSeconds = durationSeconds;
-    }
-
-    public String getTitle() { return title; }
-    public Artist getArtist() { return artist; }
-    public Genre getGenre() { return genre; }
-    public int getDurationSeconds() { return durationSeconds; }
 
     @Override
     public String toString() {

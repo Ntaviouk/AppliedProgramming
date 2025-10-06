@@ -1,24 +1,26 @@
 package model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+
+@Data
 public class Album implements Serializable {
     private String name;
     private List<Track> tracks = new ArrayList<>();
 
     public Album(String name) { this.name = name; }
-    public String getName() { return name; }
-    public List<Track> getTracks() { return tracks; }
+
 
     public void addTrack(Track t) { tracks.add(t); }
-
     public int totalDuration() {
         return tracks.stream().mapToInt(Track::getDurationSeconds).sum();
     }
-
     public void sortByGenre() {
         tracks.sort(Comparator.comparing(t -> t.getGenre().name()));
     }
