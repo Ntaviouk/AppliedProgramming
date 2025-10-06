@@ -2,9 +2,15 @@ package command;
 
 import service.AlbumService;
 
-public class ShowAlbumCommand implements Command {
-    private AlbumService service;
-    public ShowAlbumCommand(AlbumService s) { this.service = s; }
-    public boolean execute() { service.printAlbum(); return true; }
-    public String getDescription() { return "Show album"; }
+public class ShowAlbumCommand extends AlbumCommand {
+    public ShowAlbumCommand(AlbumService service) {
+        super(service);
+    }
+
+    @Override
+    public boolean execute() {
+        if (!checkService()) return true;
+        service.printAlbum();
+        return true;
+    }
 }

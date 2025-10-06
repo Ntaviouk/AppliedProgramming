@@ -2,16 +2,24 @@ package command;
 
 import service.AlbumService;
 
-public class LoadFromFileCommand implements Command {
-    private AlbumService service;
-    private String path;
-    public LoadFromFileCommand(AlbumService s, String path) { this.service=s; this.path=path; }
+public class LoadFromFileCommand extends AlbumCommand {
+    private final String path;
+
+    public LoadFromFileCommand(AlbumService service, String path) {
+        super(service);
+        this.path = path;
+    }
+
+    @Override
     public boolean execute() {
+        if (!checkService()) return true;
+
         try {
             service.loadFromFile(path);
-            System.out.println("Loaded from file");
-        } catch(Exception e) { System.out.println("Error: "+e.getMessage()); }
+            System.out.println("Album loaded from file: " + path);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
         return true;
     }
-    public String getDescription() { return "Load album from file"; }
 }

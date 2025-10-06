@@ -1,172 +1,150 @@
 package org.example;
 
 import model.*;
-import service.*;
-import command.*;
+import service.AlbumService;
+
 import java.util.*;
-import java.io.*;
+
 
 public class Main {
-    private static Album album;
-    private static AlbumService service;
-    private static Playlist playlist;
-
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Map<Integer, Command> menu = new LinkedHashMap<>();
+        Scanner scanner = new Scanner(System.in);
+        Album album = new Album("My Favorite Tracks");
+        AlbumService service = new AlbumService(album);
 
-        // 1. Створення нового альбому
-        menu.put(1, new Command() {
-            public boolean execute() {
-                System.out.print("Enter album name: ");
-                String name = sc.nextLine();
-                album = new Album(name);
-                service = new AlbumService(album);
-                System.out.println("Album '" + name + "' created.");
-                return true;
-            }
-            public String getDescription() { return "Create new album"; }
-        });
+        // ==== Меню команд ====
+        Map<Integer, MenuCommand> menu = new LinkedHashMap<>();
 
-        // 2. Додавання треку до альбому
-        menu.put(2, new Command() {
-            public boolean execute() {
-                if (album == null) { System.out.println("No album created."); return true; }
-                System.out.print("Enter track title: ");
-                String title = sc.nextLine();
-                System.out.print("Enter artist name: ");
-                String artistName = sc.nextLine();
-                System.out.print("Enter artist country: ");
-                String artistCountry = sc.nextLine();
-                System.out.print("Enter genre (ROCK, POP, JAZZ, CLASSICAL, ELECTRONIC, HIPHOP, OTHER): ");
-                Genre genre = Genre.valueOf(sc.nextLine().toUpperCase());
-                System.out.print("Enter duration (seconds): ");
-                int dur = Integer.parseInt(sc.nextLine());
-                Artist artist = new Artist(artistName, artistCountry);
-                album.addTrack(new Track(title, artist, genre, dur));
-                System.out.println("Track added.");
-                return true;
-            }
-            public String getDescription() { return "Add track to album"; }
-        });
+        menu.put(0, new MenuCommand("Exit", () -> {
+            System.out.println("Exiting...");
+            System.exit(0);
+        }));
 
-        // 3. Створення плейліста
-        menu.put(3, new Command() {
-            public boolean execute() {
-                System.out.print("Enter playlist name: ");
-                String name = sc.nextLine();
-                playlist = new Playlist(name);
-                System.out.println("Playlist '" + name + "' created.");
-                return true;
-            }
-            public String getDescription() { return "Create playlist"; }
-        });
+        menu.put(1, new MenuCommand("Create new album", () -> {
+            System.out.print("Enter album name: ");
+            scanner.nextLine(); // очищення після nextInt
+            String name = scanner.nextLine();
+            service.getAlbum().setName(name);
+            System.out.println("Album created: " + name);
+        }));
 
-        // 4. Додавання треку з альбому до плейліста
-        menu.put(4, new Command() {
-            public boolean execute() {
-                if (album == null || playlist == null) { System.out.println("Album or playlist not created."); return true; }
-                System.out.println("Select track to add to playlist:");
-                List<Track> tracks = album.getTracks();
-                for (int i = 0; i < tracks.size(); i++) System.out.println(i + ": " + tracks.get(i));
-                System.out.print("Enter track number: ");
-                int idx = Integer.parseInt(sc.nextLine());
-                if (idx >= 0 && idx < tracks.size()) {
-                    playlist.addTrack(tracks.get(idx));
-                    System.out.println("Track added to playlist.");
-                } else System.out.println("Invalid index.");
-                return true;
-            }
-            public String getDescription() { return "Add track from album to playlist"; }
-        });
+        menu.put(2, new MenuCommand("Add track manually", () -> {
+            scanner.nextLine(); // очищення
+            System.out.print("Enter track title: ");
+            String title = scanner.nextLine();
 
-        // 5. Показ альбому
-        menu.put(5, new Command() {
-            public boolean execute() {
-                if (service == null) { System.out.println("No album created."); return true; }
-                ShowAlbumCommand cmd = new ShowAlbumCommand(service);
-                return cmd.execute();
-            }
-            public String getDescription() { return "Show album"; }
-        });
+            System.out.print("Enter artist name: ");
+            String artistName = scanner.nextLine();
 
-        // 6. Сортування альбому за жанром
-        menu.put(6, new Command() {
-            public boolean execute() {
-                if (service == null) { System.out.println("No album created."); return true; }
-                SortByGenreCommand cmd = new SortByGenreCommand(service);
-                return cmd.execute();
-            }
-            public String getDescription() { return "Sort album by genre"; }
-        });
+            System.out.print("Enter artist country: ");
+            String country = scanner.nextLine();
 
-        // 7. Пошук треків за діапазоном тривалості
-        menu.put(7, new Command() {
-            public boolean execute() {
-                if (service == null) { System.out.println("No album created."); return true; }
-                System.out.print("Enter minimum duration (sec): ");
-                int min = Integer.parseInt(sc.nextLine());
-                System.out.print("Enter maximum duration (sec): ");
-                int max = Integer.parseInt(sc.nextLine());
-                FindByDurationCommand cmd = new FindByDurationCommand(service, min, max);
-                return cmd.execute();
-            }
-            public String getDescription() { return "Find tracks by duration"; }
-        });
-
-        // 8. Збереження альбому у файл
-        menu.put(8, new Command() {
-            public boolean execute() {
-                if (album == null) { System.out.println("No album created."); return true; }
-                System.out.print("Enter file name to save album: ");
-                String fileName = sc.nextLine();
-                try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-                    oos.writeObject(album);
-                    System.out.println("Album saved to file: " + fileName);
-                } catch (Exception e) {
-                    System.out.println("Error saving album: " + e.getMessage());
-                }
-                return true;
-            }
-            public String getDescription() { return "Save album to file"; }
-        });
-
-        // 10. Завантаження альбому з файлу
-        menu.put(10, new Command() {
-            public boolean execute() {
-                System.out.print("Enter file name to load album: ");
-                String fileName = sc.nextLine();
-                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-                    album = (Album) ois.readObject();
-                    service = new AlbumService(album);
-                    System.out.println("Album loaded from file: " + fileName);
-                } catch (Exception e) {
-                    System.out.println("Error loading album: " + e.getMessage());
-                }
-                return true;
-            }
-            public String getDescription() { return "Load album from file"; }
-        });
-
-        // 9. Довідка
-        menu.put(9, new HelpCommand(menu));
-        // 0. Вихід
-        menu.put(0, new ExitCommand());
-
-        boolean running = true;
-        while (running) {
-            System.out.println("\n===== Menu =====");
-            menu.forEach((k,v) -> System.out.println(k+" - "+v.getDescription()));
-            System.out.print("Select option: ");
-            String line = sc.nextLine();
+            System.out.print("Enter genre (ROCK, POP, JAZZ, etc.): ");
+            String genreName = scanner.nextLine().toUpperCase();
+            Genre genre;
             try {
-                int choice = Integer.parseInt(line);
-                Command c = menu.get(choice);
-                if (c != null) running = c.execute();
-                else System.out.println("Unknown choice");
-            } catch(Exception e) {
-                System.out.println("Invalid input. Enter a number.");
+                genre = Genre.valueOf(genreName);
+            } catch (IllegalArgumentException e) {
+                genre = Genre.OTHER;
+            }
+
+            System.out.print("Enter duration (seconds): ");
+            int duration = scanner.nextInt();
+
+            Artist artist = new Artist(artistName, country);
+            Track track = new Track(title, artist, genre, duration);
+            service.getAlbum().addTrack(track);
+            System.out.println("✅ Track added: " + track);
+        }));
+
+        menu.put(3, new MenuCommand("Load album from file", () -> {
+            scanner.nextLine();
+            System.out.print("Enter file path: ");
+            String path = scanner.nextLine();
+            try {
+                service.loadFromFile(path);
+                System.out.println("✅ Album loaded successfully!");
+            } catch (Exception e) {
+                System.out.println("❌ Error loading album: " + e.getMessage());
+            }
+        }));
+
+        menu.put(4, new MenuCommand("Show album", service::printAlbum));
+
+        menu.put(5, new MenuCommand("Sort tracks by genre", () -> {
+            service.sortByGenre();
+            System.out.println("✅ Sorted by genre.");
+        }));
+
+        menu.put(6, new MenuCommand("Find tracks by duration range", () -> {
+            System.out.print("Enter minimum duration (seconds): ");
+            int min = scanner.nextInt();
+            System.out.print("Enter maximum duration (seconds): ");
+            int max = scanner.nextInt();
+            var found = service.findByDurationRange(min, max);
+            if (found.isEmpty()) {
+                System.out.println("No tracks found in this range.");
+            } else {
+                System.out.println("Tracks found:");
+                found.forEach(System.out::println);
+            }
+        }));
+
+        menu.put(7, new MenuCommand("Show total album duration", () -> {
+            int total = service.getAlbum().totalDuration();
+            System.out.printf("Total duration: %d:%02d%n", total / 60, total % 60);
+        }));
+
+        menu.put(8, new MenuCommand("Help", () -> {
+            System.out.println("This program allows managing a music album:");
+            System.out.println(" - Add tracks manually or load from file");
+            System.out.println(" - Sort tracks by genre");
+            System.out.println(" - Find tracks by duration range");
+            System.out.println(" - Display total album info");
+        }));
+
+        // ==== Головний цикл ====
+        while (true) {
+            System.out.println("\n===== MENU =====");
+            menu.forEach((key, cmd) -> System.out.println(key + " - " + cmd.getName()));
+            System.out.print("Select option: ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input, enter a number.");
+                scanner.next();
+                continue;
+            }
+
+            int choice = scanner.nextInt();
+            MenuCommand cmd = menu.get(choice);
+            if (cmd != null) {
+                try {
+                    cmd.getAction().run();
+                } catch (Exception e) {
+                    System.out.println("❌ Error: " + e.getMessage());
+                }
+            } else {
+                System.out.println("No such command.");
             }
         }
+    }
+}
+
+
+class MenuCommand {
+    private final String name;
+    private final Runnable action;
+
+    public MenuCommand(String name, Runnable action) {
+        this.name = name;
+        this.action = action;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Runnable getAction() {
+        return action;
     }
 }

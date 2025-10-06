@@ -1,18 +1,26 @@
 package command;
 
+import model.Track;
 import service.AlbumService;
-import model.*;
-import java.util.*;
 
-public class FindByDurationCommand implements Command {
-    private AlbumService service;
-    private int min, max;
-    public FindByDurationCommand(AlbumService s, int min, int max) { this.service=s; this.min=min; this.max=max; }
+import java.util.List;
+
+public class FindByDurationCommand extends AlbumCommand {
+    private final int min, max;
+
+    public FindByDurationCommand(AlbumService service, int min, int max) {
+        super(service);
+        this.min = min;
+        this.max = max;
+    }
+
+    @Override
     public boolean execute() {
-        List<Track> res = service.findByDurationRange(min,max);
-        if (res.isEmpty()) System.out.println("No tracks found");
+        if (!checkService()) return true;
+
+        List<Track> res = service.findByDurationRange(min, max);
+        if (res.isEmpty()) System.out.println("No tracks found.");
         else res.forEach(System.out::println);
         return true;
     }
-    public String getDescription() { return "Find tracks by duration"; }
 }

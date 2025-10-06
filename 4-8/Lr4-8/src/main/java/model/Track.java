@@ -2,9 +2,11 @@ package model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
 import java.io.Serializable;
 
+/**
+ * Музичний трек.
+ */
 @Data
 @AllArgsConstructor
 public class Track implements Serializable {
@@ -15,6 +17,11 @@ public class Track implements Serializable {
 
     @Override
     public String toString() {
-        return artist + " - " + title + " [" + genre + "] (" + durationSeconds/60 + ":" + durationSeconds%60 + ")";
+        return String.format("%s - %s [%s] (%d:%02d)",
+                artist,
+                title,
+                genre,
+                durationSeconds / 60,
+                durationSeconds % 60);
     }
 }
