@@ -2,6 +2,8 @@ package service;
 
 import lombok.Data;
 import model.*;
+
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +17,21 @@ public class AlbumService {
         this.album = album;
     }
 
+    public void saveToFile(String path) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(path))) {
+            for (Track t : album.getTracks()) {
+                String line = String.join("|",
+                        t.getTitle(),
+                        t.getArtist().getName(),
+                        t.getArtist().getCountry(),
+                        t.getGenre().name(),
+                        String.valueOf(t.getDurationSeconds())
+                );
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
 
     public void loadFromFile(String path) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(path));

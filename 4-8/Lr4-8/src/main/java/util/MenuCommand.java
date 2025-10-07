@@ -1,20 +1,15 @@
 package util;
 
-
-public class MenuCommand {
+public abstract class MenuCommand {
     private final String name;
-    private final Runnable action;
 
-    public MenuCommand(String name, Runnable action) {
+    public MenuCommand(String name) {
         this.name = name;
-        this.action = action;
     }
 
     public String getName() {
         return name;
     }
 
-    public Runnable getAction() {
-        return action;
-    }
+    public abstract void execute();
 }
