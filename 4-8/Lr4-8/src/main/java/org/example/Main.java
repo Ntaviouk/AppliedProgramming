@@ -2,13 +2,13 @@ package org.example;
 
 import model.*;
 import service.AlbumService;
-import util.AudioPlayer;
-import util.AudioRecorder;
-import util.MenuCommand;
-import util.AppLogger;
+import util.*;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,13 +18,19 @@ public class Main {
     private static AlbumService service;
     private static Map<String, Playlist> playlists = new LinkedHashMap<>();
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Logger logger = AppLogger.getLogger();
+
+    private static Logger logger;
+    private static EmailService emailService;
 
     public static void main(String[] args) {
+        emailService = new EmailService();
+        logger = AppLogger.setupLogger(emailService);
+
         logger.info("=== Програму запущено ===");
-        AppLogger.sendStartupEmail();
+        emailService.sendStartupEmail(); // Використовуємо екземпляр EmailService
 
         Map<Integer, MenuCommand> menu = new LinkedHashMap<>();
+
 
         menu.put(0, new MenuCommand("Exit") {
             public void execute() {

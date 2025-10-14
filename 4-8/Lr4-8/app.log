@@ -1,0 +1,24 @@
+жовт. 14, 2025 12:37:32 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 12:37:42 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 12:38:11 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 12:41:18 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 1:46:21 ДП util.AppLoggerTest emailHandler_shouldNotSendEmailOnInfoLevel
+INFO: Just a regular message.
+жовт. 14, 2025 1:46:21 ДП util.AppLoggerTest emailHandler_shouldSendEmailOnSevereError
+SEVERE: This is a critical failure!
+жовт. 14, 2025 10:17:36 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 10:18:54 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 10:22:24 ДП org.example.Main main
+INFO: === Програму запущено ===
+жовт. 14, 2025 10:36:33 ДП util.AppLoggerTest emailHandler_shouldNotSendEmailOnInfoLevel
+INFO: Just a regular message.
+жовт. 14, 2025 10:36:33 ДП util.AppLoggerTest emailHandler_shouldSendEmailOnSevereError
+SEVERE: This is a critical failure!
+жовт. 14, 2025 10:55:35 ДП org.example.Main main
+INFO: === Програму запущено ===
