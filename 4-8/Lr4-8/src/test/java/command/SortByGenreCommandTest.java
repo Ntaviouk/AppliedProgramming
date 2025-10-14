@@ -1,22 +1,40 @@
 package command;
 
-import model.*;
-import service.AlbumService;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import service.AlbumService;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class SortByGenreCommandTest {
+
+    @Mock
+    private AlbumService mockService;
+
+    @InjectMocks
+    private SortByGenreCommand sortCommand;
+
     @Test
-    void testExecute() {
-        Album album = new Album("Test");
-        Artist a = new Artist("X","Y");
-        album.addTrack(new Track("Song1", a, Genre.ROCK, 100));
-        album.addTrack(new Track("Song2", a, Genre.CLASSICAL, 200));
+    void execute_whenServiceExists_shouldCallSortByGenre() {
 
-        AlbumService service = new AlbumService(album);
-        SortByGenreCommand cmd = new SortByGenreCommand(service);
+        boolean result = sortCommand.execute();
 
-        assertTrue(cmd.execute());
-        assertEquals(Genre.CLASSICAL, album.getTracks().get(0).getGenre());
+        assertTrue(result);
+        verify(mockService, times(1)).sortByGenre();
+        verifyNoMoreInteractions(mockService);
+    }
+
+    @Test
+    void execute_whenServiceIsNull_shouldReturnTrueAndNotCrash() {
+        SortByGenreCommand commandWithNullService = new SortByGenreCommand(null);
+
+        boolean result = commandWithNullService.execute();
+
+        assertTrue(result);
     }
 }

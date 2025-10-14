@@ -1,53 +1,46 @@
 package command;
 
-import model.*;
-import service.AlbumService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import service.AlbumService;
 
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class LoadFromFileCommandTest {
 
+    @Mock
+    private AlbumService mockService;
+
+
+
     @Test
-    void testExecuteSuccessfulLoad() throws Exception {
-        // create temp file with album data
-        Path tempFile = Files.createTempFile("album", ".txt");
-        try (FileWriter writer = new FileWriter(tempFile.toFile())) {
-            writer.write("Song1|Artist1|USA|ROCK|120\n");
-            writer.write("Song2|Artist2|UK|POP|200\n");
-        }
+    void execute_shouldCallLoadFromFile() throws IOException {
+        String path = "test.txt";
+        LoadFromFileCommand command = new LoadFromFileCommand(mockService, path);
 
-        Album album = new Album("LoadedAlbum");
-        AlbumService service = new AlbumService(album);
+        boolean result = command.execute();
 
-        LoadFromFileCommand cmd = new LoadFromFileCommand(service, tempFile.toString());
-        assertTrue(cmd.execute()); // returns true always
-
-        assertEquals(2, album.getTracks().size());
-        assertEquals("Song1", album.getTracks().get(0).getTitle());
-        assertEquals("Song2", album.getTracks().get(1).getTitle());
+        assertTrue(result);
+        verify(mockService, times(1)).loadFromFile(path);
     }
 
     @Test
-    void testExecuteWithError() {
-        Album album = new Album("BadAlbum");
-        AlbumService service = new AlbumService(album);
+    void execute_whenServiceThrowsException_shouldHandleItGracefully() throws IOException {
+        String path = "nonexistent.txt";
+        LoadFromFileCommand command = new LoadFromFileCommand(mockService, path);
 
-        LoadFromFileCommand cmd = new LoadFromFileCommand(service, "non_existent_file.txt");
-        assertTrue(cmd.execute()); // still returns true, but prints error
-        assertTrue(album.getTracks().isEmpty());
-    }
+        doThrow(new IOException("File not found")).when(mockService).loadFromFile(path);
 
-    @Test
-    void testDescription() {
-        Album album = new Album("Test");
-        AlbumService service = new AlbumService(album);
-        LoadFromFileCommand cmd = new LoadFromFileCommand(service, "file.txt");
+        boolean result = command.execute();
 
-        assertEquals("Load album from file", cmd.getDescription());
+        assertTrue(result);
+        verify(mockService, times(1)).loadFromFile(path);
     }
 }

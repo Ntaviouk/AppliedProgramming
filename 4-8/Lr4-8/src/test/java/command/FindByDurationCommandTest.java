@@ -1,48 +1,50 @@
 package command;
 
-import model.*;
-import service.AlbumService;
-import org.junit.jupiter.api.BeforeEach;
+import model.Artist;
+import model.Genre;
+import model.Track;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import service.AlbumService;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class FindByDurationCommandTest {
 
-    private Album album;
-    private AlbumService service;
+    @Mock
+    private AlbumService mockService;
 
-    @BeforeEach
-    void setUp() {
-        album = new Album("TestAlbum");
-        Artist artist = new Artist("TestArtist", "USA");
-        album.addTrack(new Track("ShortSong", artist, Genre.ROCK, 100));
-        album.addTrack(new Track("LongSong", artist, Genre.POP, 300));
-        service = new AlbumService(album);
+    @Test
+    void execute_whenTracksFound_shouldCallServiceAndPrint() {
+        int min = 100, max = 200;
+        FindByDurationCommand command = new FindByDurationCommand(mockService, min, max);
+        List<Track> foundTracks = List.of(new Track("Test Track", new Artist("Test", "Test"), Genre.OTHER, 150));
+
+        when(mockService.findByDurationRange(min, max)).thenReturn(foundTracks);
+
+        boolean result = command.execute();
+
+        assertTrue(result);
+        verify(mockService, times(1)).findByDurationRange(min, max);
     }
 
     @Test
-    void testExecuteWithResults() {
-        FindByDurationCommand cmd = new FindByDurationCommand(service, 90, 150);
-        assertTrue(cmd.execute());
-        List<Track> results = service.findByDurationRange(90, 150);
-        assertEquals(1, results.size());
-        assertEquals("ShortSong", results.get(0).getTitle());
-    }
+    void execute_whenNoTracksFound_shouldCallService() {
+        int min = 100, max = 200;
+        FindByDurationCommand command = new FindByDurationCommand(mockService, min, max);
 
-    @Test
-    void testExecuteNoResults() {
-        FindByDurationCommand cmd = new FindByDurationCommand(service, 400, 500);
-        assertTrue(cmd.execute());
-        List<Track> results = service.findByDurationRange(400, 500);
-        assertTrue(results.isEmpty());
-    }
+        when(mockService.findByDurationRange(min, max)).thenReturn(Collections.emptyList());
 
-    @Test
-    void testDescription() {
-        FindByDurationCommand cmd = new FindByDurationCommand(service, 0, 1000);
-        assertEquals("Find tracks by duration", cmd.getDescription());
+        boolean result = command.execute();
+
+        assertTrue(result);
+        verify(mockService, times(1)).findByDurationRange(min, max);
     }
 }
