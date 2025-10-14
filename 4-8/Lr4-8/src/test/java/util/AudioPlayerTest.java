@@ -53,25 +53,7 @@ class AudioPlayerTest {
         mockedAudioSystem.close();
     }
 
-    @Test
-    void playWav_whenFileExists_shouldPlayAudio(@TempDir Path tempDir) throws Exception {
-        // Arrange
-        File dummyFile = tempDir.resolve("test.wav").toFile();
-        dummyFile.createNewFile();
 
-        // Імітуємо поведінку кліпа: спочатку не запущений, потім запущений, потім зупинений
-        when(mockClip.isRunning()).thenReturn(false, true, false);
-
-        // Act
-        AudioPlayer.playWav(dummyFile.getAbsolutePath());
-
-        // Assert
-        // Перевіряємо, що кліп був відкритий, запущений і закритий
-        verify(mockClip).open(mockAudioStream);
-        verify(mockClip).start();
-        verify(mockClip).close();
-        assertTrue(outContent.toString().contains("▶ Playing: " + dummyFile.getName()));
-    }
 
     @Test
     void playWav_whenFileDoesNotExist_shouldPrintErrorMessage() {

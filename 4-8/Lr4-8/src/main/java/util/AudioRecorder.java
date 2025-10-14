@@ -11,7 +11,7 @@ public class AudioRecorder {
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
         if (!AudioSystem.isLineSupported(info)) {
-            System.out.println("❌ Audio recording not supported.");
+            System.out.println("Audio recording not supported.");
             return;
         }
 
@@ -44,7 +44,7 @@ public class AudioRecorder {
             AudioSystem.write(ais, AudioFileFormat.Type.WAVE, outputFile);
 
             stopper.join(); // чекаємо завершення stopper
-            System.out.println("✅ Recording finished. File saved: " + outputFile.getAbsolutePath());
+            System.out.println("Recording finished. File saved: " + outputFile.getAbsolutePath());
 
         } catch (LineUnavailableException | IOException | InterruptedException e) {
             System.out.println("Error recording audio: " + e.getMessage());
